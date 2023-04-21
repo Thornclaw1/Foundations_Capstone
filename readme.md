@@ -3,11 +3,9 @@
 
 ## Login Info
 ### Manager
-> Email: admin
-> Password: 123
+> Email: admin<br>Password: 123
 ### User
-> Email: user
-> Password: 123
+> Email: user<br>Password: 123
 
 ---
 
