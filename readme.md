@@ -44,4 +44,4 @@ A file called `ar.csv` includes assignment results that can be imported using th
 ---
 
 ## ERD
-<img src="Capstone ERD.png" alt="Capstone ERD"/>
+<img src="ERD.png" alt="Capstone ERD"/>
