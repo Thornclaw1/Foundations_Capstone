@@ -1,10 +1,13 @@
 import sys
+import bcrypt
 
 from utils.datetime_utils import *
 from utils.forms import *
+from utils.box import *
 from connection import Connection
 
-from users import *
+from models import *
+from csv_utils import *
 
 connection = Connection("users.db")
 cursor = connection.cursor
@@ -32,24 +35,36 @@ def add_default_competencies():
         'Recursion',
         'Databases'
     ]
-    current_time = get_current_time()
+    current_time = get_current_day()
     for competency in default_competencies:
-        cursor.execute("INSERT INTO Competencies (name, date_created) VALUES (?, ?)", (competency, current_time))
+        competency_id = str(uuid.uuid4())
+        cursor.execute("INSERT INTO Competencies (competency_id, name, date_created) VALUES (?, ?, ?)", (competency_id, competency, current_time))
     connection.commit()
 
+main_menu_items = {
+    "1":("Users", User.users_menu),
+    "2":("Competencies", Competency.competencies_menu),
+    "3":("Assessments", Assessment.assessments_menu),
+    "4":("Assessment Results", AssessmentResult.results_menu),
+    "5":("Import CSV", import_csv)
+}
 
+def main_menu():
+    menu_selection = full_menu("Main Menu", main_menu_items)
 
 if __name__ == "__main__":
     for arg in sys.argv[1::]:
         if arg == '--init-db':
             init_db()
             add_default_competencies()
+            print("Create a Manager\n")
+            User.create_manager()
         elif arg == '--adc' or arg == '--add-default-competencies':
             add_default_competencies()
 
-    # User.create_user()
-    # rlinput("First Name : ", "Cameron")
-    # first_name, last_name, phone, email, password, hire_date = edit_form(("First Name", "Last Name", "Phone", "Email", "Password", "Hire Date"), ("Cameron", "Fletcher", "382088259", "camfletcher02@gmail.com", "123", "2023-04-03"))
-    # print(first_name, last_name, phone, email, password, hire_date)
-    # User.print_all_users()
-    # User.search_users()
+    print("\033c", end="")
+    user = User.login()
+    if user.user_type == "manager":
+        main_menu()
+    else:
+        user.own_user_menu()

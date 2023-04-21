@@ -24,15 +24,18 @@ def menu(menu_items, padding=1, indexing_format = "[?]", starting_index = 1):
     boxed_menu += "└" + "─"*padded_width + "┘"
     return boxed_menu
 
-def full_menu(menu_items, quit=("0", "Quit"), padding=1, indexing_format = "[?]"):
+def full_menu(menu_name, menu_items, quit=("0", "Quit"), enter_to_quit=True, padding=1, indexing_format = "[?]", pre_print_func = None):
     menu_items[quit[0]] = (quit[1], lambda : True)
-    valid_inputs = menu_items.keys()
+    valid_inputs = list(menu_items.keys())
+    if enter_to_quit:
+        valid_inputs.append('')
     menu_strs = [f"{indexing_format.replace('?',str(key))} {val[0]}" for key, val in menu_items.items()]
     width = len(max(menu_strs, key=len))
     padded_width = width + padding * 2
 
     def print_menu():
-        boxed_menu = "┌" + "─"*padded_width + "┐\n"
+        boxed_menu = f" {menu_name} ".center(padded_width + 2, '─') + "\n"
+        boxed_menu += "┌" + "─"*padded_width + "┐\n"
         for key, val in menu_items.items():
             line = f"{indexing_format.replace('?',key)} {val[0]}"
             boxed_menu += f"│{' '*padding}{line:{width}}{' '*padding}│\n"
@@ -40,9 +43,14 @@ def full_menu(menu_items, quit=("0", "Quit"), padding=1, indexing_format = "[?]"
         print(boxed_menu)
 
     while True:
+        print("\033c", end="")
+        if pre_print_func: pre_print_func()
         print_menu()
         while True:
             if (user_input := input(">>> ")) in valid_inputs:
+                if user_input == '':
+                    return
+                print()
                 if menu_items[user_input][1]():
                     return
                 break

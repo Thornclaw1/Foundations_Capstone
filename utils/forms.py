@@ -9,10 +9,9 @@ def form(*form_fields):
         print(f"{field:>{max_width}} : ")
     form_values = []
     util.move("up", field_count)
-    for _ in range(field_count):
-        util.move("right", max_width + 3)
-        form_values.append(input())
-    return tuple(form_values)
+    for field in form_fields:
+        form_values.append(input(f"{field:>{max_width}} : "))
+    return tuple(form_values) if len(form_values) > 1 else form_values[0] if len(form_values) > 0 else None
 
 def edit_form(form_fields, existing_values):
     field_count = len(form_fields)
@@ -22,9 +21,8 @@ def edit_form(form_fields, existing_values):
     form_values = []
     util.move("up", field_count)
     for idx, field in enumerate(form_fields):
-        # util.move("right", max_width + 3)
         form_values.append(rlinput(f"{field:>{max_width}} : ", existing_values[idx]))
-    return tuple(form_values)
+    return tuple(form_values) if len(form_values) > 1 else form_values[0] if len(form_values) > 0 else None
 
 def rlinput(prompt, prefill=''):
     readline.set_startup_hook(lambda: readline.insert_text(prefill))

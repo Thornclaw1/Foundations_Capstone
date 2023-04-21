@@ -1,4 +1,12 @@
-from utils.input_utils import *
+def int_input(prompt = "", allow_empty = False):
+    while True:
+        try:
+            user_input = input(prompt)
+            if allow_empty and not user_input: return None
+            user_input = int(user_input)
+            return user_input
+        except:
+            print("Input must be an integer number.")
 
 class DataTable():
 
@@ -180,7 +188,9 @@ class DataTable():
 
         print(table_str)
         while True:
-            if (user_input := int_input(">>> ")) in range(len(self.rows)):
+            user_input = int_input(">>> ", allow_empty=True)
+            if user_input is None: return None
+            if user_input in range(len(self.rows)):
                 return self.rows[user_input]
 
     def append(self, row):
